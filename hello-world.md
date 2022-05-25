@@ -20,3 +20,10 @@ along with a [link](https://google.com)
 ![and an image](https://google.com)
 
 ## Lmao
+
+```js
+// this is an example code thingy that is very cool
+
+let x = 10;
+let y = x + 10;
+```

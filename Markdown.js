@@ -47,7 +47,7 @@ export default class Markdown {
         return {
             type,
             content: this.parseContent(content),
-            ...props,
+            props,
         };
     }
 
@@ -158,6 +158,21 @@ export default class Markdown {
             return null;
         }
 
+        // handle code blocks
+        else if (currentLine.startsWith("```")) {
+            let code = [];
+            let codeType = currentLine.substring(3);
+
+            while (this.peekLine() !== "```" && this.peekLine()) {
+                code.push(this.nextLine());
+            }
+
+            this.nextLine();
+            return this.createToken("code", code.join("\n"), {
+                "data-type": codeType,
+            });
+        }
+
         // headings
         else if (currentLine.startsWith("#")) {
             const heading = currentLine.split(" ").shift();
@@ -194,8 +209,14 @@ export default class Markdown {
         return this.createToken("p", currentLine);
     }
 
-    createElement(tag, innerHTML) {
-        return `<${tag}>${innerHTML}</${tag}>`;
+    createElement(tag, innerHTML, props = {}) {
+        let renderedProps = [];
+        for (const [key, value] of Object.entries(props)) {
+            renderedProps.push(`${key}="${value}"`);
+        }
+
+        const startingTag = `${tag} ${renderedProps.join(" ")}`.trim();
+        return `<${startingTag}>${innerHTML}</${tag}>`;
     }
 
     render() {
@@ -211,7 +232,8 @@ export default class Markdown {
                 while (this.tokens[currentIndex].type === "ul") {
                     html += this.createElement(
                         "li",
-                        this.tokens[currentIndex].content
+                        this.tokens[currentIndex].content,
+                        this.tokens[currentIndex].props
                     );
 
                     currentIndex++;
@@ -224,17 +246,25 @@ export default class Markdown {
                 while (this.tokens[currentIndex].type === "ol") {
                     html += this.createElement(
                         "li",
-                        this.tokens[currentIndex].content
+                        this.tokens[currentIndex].content,
+                        this.tokens[currentIndex].props
                     );
 
                     currentIndex++;
                 }
 
                 html += "</ol>";
+            } else if (currentToken.type === "code") {
+                html += `<pre>${this.createElement(
+                    currentToken.type,
+                    currentToken.content,
+                    this.tokens[currentIndex].props
+                )}</pre>`;
             } else {
                 html += this.createElement(
                     currentToken.type,
-                    currentToken.content
+                    currentToken.content,
+                    this.tokens[currentIndex].props
                 );
             }
 
