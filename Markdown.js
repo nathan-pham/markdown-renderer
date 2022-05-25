@@ -1,3 +1,5 @@
+// created with shit-driven development:
+// keep adding features and loops until it works!
 export default class Markdown {
     constructor(input) {
         this.currentIndex = 0;
@@ -7,13 +9,6 @@ export default class Markdown {
         this.tokens = this.tokenize();
 
         console.log(this.tokens);
-
-        // console.log();
-        // console.log();
-        // console.log();
-
-        // console.log(JSON.stringify(this.tokens, null, 2), "tokens");
-        // console.log(this.metadata, "metadata");
     }
 
     static preprocess(input, delimiter = "\n") {
@@ -63,15 +58,27 @@ export default class Markdown {
         let currentIndex = 0;
         let renderedContent = "";
 
-        console.log(content, "content");
-
         while (currentIndex < content.length) {
             const currentChar = content[currentIndex];
             let completePassFlag = false;
+            let prevIndex = currentIndex;
+
+            const failed = (char) => {
+                if (content[currentIndex] !== char) {
+                    renderedContent += content.substring(
+                        prevIndex,
+                        currentIndex + 1
+                    );
+
+                    completePassFlag = true;
+                    return true;
+                }
+
+                return false;
+            };
 
             // handle link
             handleLink: if (currentChar === "[") {
-                let prevIndex = currentIndex;
                 let linkContent = "";
                 let linkSrc = "";
 
@@ -84,13 +91,7 @@ export default class Markdown {
                 currentIndex += 2;
 
                 // require the next character to be an opening ()
-                if (content[currentIndex] !== "(") {
-                    renderedContent += content.substring(
-                        prevIndex,
-                        currentIndex + 1
-                    );
-
-                    completePassFlag = true;
+                if (failed("(")) {
                     break handleLink;
                 }
 
@@ -106,20 +107,33 @@ export default class Markdown {
             }
 
             handleImage: if (currentChar === "!" && !completePassFlag) {
-                let prevIndex = currentIndex;
-                if (content[currentIndex + 1] !== "[") {
-                    currentIndex += 2;
-                    renderedContent += content.substring(
-                        prevIndex,
-                        currentIndex + 1
-                    );
+                let imageContent = "";
+                let imageSrc = "";
 
-                    completePassFlag = true;
+                currentIndex++;
+                if (failed("[")) {
                     break handleImage;
                 }
 
-                // ![alt](lmao)
+                while (content[currentIndex + 1] !== "]") {
+                    currentIndex++;
+                    imageContent += content[currentIndex];
+                }
 
+                // skip over closing ]
+                currentIndex += 2;
+
+                if (failed("(")) {
+                    break handleImage;
+                }
+
+                while (content[currentIndex + 1] !== ")") {
+                    currentIndex++;
+                    imageSrc += content[currentIndex];
+                }
+
+                currentIndex++; // skip over closing brace
+                renderedContent += `<img src="${imageSrc}" alt="${imageContent}" />`;
                 completePassFlag = true;
             }
 
