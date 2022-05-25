@@ -6,12 +6,14 @@ export default class Markdown {
         this.lines = Markdown.preprocess(input);
         this.tokens = this.tokenize();
 
-        console.log();
-        console.log();
-        console.log();
+        console.log(this.tokens);
 
-        console.log(this.tokens, "tokens");
-        console.log(this.metadata, "metadata");
+        // console.log();
+        // console.log();
+        // console.log();
+
+        // console.log(JSON.stringify(this.tokens, null, 2), "tokens");
+        // console.log(this.metadata, "metadata");
     }
 
     static preprocess(input, delimiter = "\n") {
@@ -37,7 +39,7 @@ export default class Markdown {
     tokenize() {
         const tokens = [];
         while (this.currentIndex < this.lines.length) {
-            const result = this.parse(this.currentLine);
+            const result = this.parseLine(this.currentLine);
             if (result) {
                 tokens.push(result);
             }
@@ -48,28 +50,90 @@ export default class Markdown {
         return tokens;
     }
 
-    createToken(type, content) {
+    createToken(type, content, props = {}) {
         return {
             type,
             content: this.parseContent(content),
+            ...props,
         };
     }
 
+    // this really really really needs to be refactored
     parseContent(content) {
-        const words = Markdown.preprocess(content, " ");
-        const tokens = [];
-
         let currentIndex = 0;
+        let renderedContent = "";
 
-        while (currentIndex < words.length) {
-            tokens.push(words[currentIndex]);
+        console.log(content, "content");
+
+        while (currentIndex < content.length) {
+            const currentChar = content[currentIndex];
+            let completePassFlag = false;
+
+            // handle link
+            handleLink: if (currentChar === "[") {
+                let prevIndex = currentIndex;
+                let linkContent = "";
+                let linkSrc = "";
+
+                while (content[currentIndex + 1] !== "]") {
+                    currentIndex++;
+                    linkContent += content[currentIndex];
+                }
+
+                // skip over closing ]
+                currentIndex += 2;
+
+                // require the next character to be an opening ()
+                if (content[currentIndex] !== "(") {
+                    renderedContent += content.substring(
+                        prevIndex,
+                        currentIndex + 1
+                    );
+
+                    completePassFlag = true;
+                    break handleLink;
+                }
+
+                while (content[currentIndex + 1] !== ")") {
+                    currentIndex++;
+                    linkSrc += content[currentIndex];
+                }
+
+                currentIndex++; // skip over closing brace
+                renderedContent += `<a href="${linkSrc}">${linkContent}</a>`;
+
+                completePassFlag = true;
+            }
+
+            handleImage: if (currentChar === "!" && !completePassFlag) {
+                let prevIndex = currentIndex;
+                if (content[currentIndex + 1] !== "[") {
+                    currentIndex += 2;
+                    renderedContent += content.substring(
+                        prevIndex,
+                        currentIndex + 1
+                    );
+
+                    completePassFlag = true;
+                    break handleImage;
+                }
+
+                // ![alt](lmao)
+
+                completePassFlag = true;
+            }
+
+            if (!completePassFlag) {
+                renderedContent += currentChar;
+            }
+
             currentIndex++;
         }
 
-        return tokens;
+        return renderedContent;
     }
 
-    parse(currentLine) {
+    parseLine(currentLine) {
         // handle metadata
         if (currentLine === "---") {
             while (this.peekLine() !== "---" && this.peekLine()) {
