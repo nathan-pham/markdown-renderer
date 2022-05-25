@@ -7,8 +7,6 @@ export default class Markdown {
 
         this.lines = Markdown.preprocess(input);
         this.tokens = this.tokenize();
-
-        console.log(this.tokens);
     }
 
     static preprocess(input, delimiter = "\n") {
@@ -180,7 +178,7 @@ export default class Markdown {
 
         // unordered list
         else if (currentLine.startsWith("- ")) {
-            return this.createToken("li", currentLine.substring(1).trimStart());
+            return this.createToken("ul", currentLine.substring(1).trimStart());
         }
 
         // ordered list
@@ -196,5 +194,53 @@ export default class Markdown {
         return this.createToken("p", currentLine);
     }
 
-    render() {}
+    createElement(tag, innerHTML) {
+        return `<${tag}>${innerHTML}</${tag}>`;
+    }
+
+    render() {
+        let html = "";
+        let currentIndex = 0;
+
+        while (currentIndex < this.tokens.length) {
+            const currentToken = this.tokens[currentIndex];
+
+            if (currentToken.type === "ul") {
+                html += "<ul>";
+
+                while (this.tokens[currentIndex].type === "ul") {
+                    html += this.createElement(
+                        "li",
+                        this.tokens[currentIndex].content
+                    );
+
+                    currentIndex++;
+                }
+
+                html += "</ul>";
+            } else if (currentToken.type === "ol") {
+                html += "<ol>";
+
+                while (this.tokens[currentIndex].type === "ol") {
+                    html += this.createElement(
+                        "li",
+                        this.tokens[currentIndex].content
+                    );
+
+                    currentIndex++;
+                }
+
+                html += "</ol>";
+            } else {
+                html += this.createElement(
+                    currentToken.type,
+                    currentToken.content
+                );
+            }
+
+            currentIndex++;
+        }
+
+        return html;
+    }
 }
