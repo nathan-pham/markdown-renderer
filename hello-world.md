@@ -21,6 +21,8 @@ along with a [link](https://google.com)
 
 ## Lmao
 
+and this is some _italics_ content and some **bold** content
+
 ```js
 // this is an example code thingy that is very cool
 

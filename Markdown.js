@@ -104,6 +104,7 @@ export default class Markdown {
                 completePassFlag = true;
             }
 
+            // handle image
             handleImage: if (currentChar === "!" && !completePassFlag) {
                 let imageContent = "";
                 let imageSrc = "";
@@ -120,7 +121,6 @@ export default class Markdown {
 
                 // skip over closing ]
                 currentIndex += 2;
-
                 if (failed("(")) {
                     break handleImage;
                 }
@@ -132,6 +132,44 @@ export default class Markdown {
 
                 currentIndex++; // skip over closing brace
                 renderedContent += `<img src="${imageSrc}" alt="${imageContent}" />`;
+                completePassFlag = true;
+            }
+
+            // handle italics
+            handleItalics: if (currentChar === "_" && !completePassFlag) {
+                let italicsContent = "";
+
+                while (content[currentIndex + 1] !== "_") {
+                    currentIndex++;
+                    italicsContent += content[currentIndex];
+                }
+
+                currentIndex++;
+                renderedContent += `<i>${italicsContent}</i>`;
+                completePassFlag = true;
+            }
+
+            // handle bold
+            handleBold: if (currentChar === "*" && !completePassFlag) {
+                let boldContent = "";
+
+                currentIndex++;
+                if (failed("*")) {
+                    break handleBold;
+                }
+
+                while (content[currentIndex + 1] !== "*") {
+                    currentIndex++;
+                    boldContent += content[currentIndex];
+                }
+
+                currentIndex++;
+                if (failed("*")) {
+                    break handleBold;
+                }
+
+                currentIndex++;
+                renderedContent += `<b>${boldContent}</b>`;
                 completePassFlag = true;
             }
 
