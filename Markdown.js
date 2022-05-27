@@ -228,9 +228,14 @@ export default class Markdown {
             }
 
             this.nextLine();
-            return this.createToken("code", code.join("\n"), {
-                "data-type": codeType,
-            });
+
+            if (codeType) {
+                return this.createToken("code", code.join("\n"), {
+                    "data-type": codeType,
+                });
+            }
+
+            return this.createToken("code", code.join("\n"));
         }
 
         // headings

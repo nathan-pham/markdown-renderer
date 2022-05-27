@@ -1,19 +1,13 @@
 import Markdown from "../Markdown.js";
 
-const orderedList = `
-1. Eat goldfish
+const orderedList = `1. Eat goldfish
 2. Re-stock fridge
-3. Eat goldfish (again)
-`;
+3. Eat goldfish (again)`;
 
 const unorderedList = orderedList
     .split("\n")
-    .map((line) => line.substring(3))
+    .map((line) => `- ${line.substring(3)}`)
     .join("\n");
-
-{
-    /* <li></li> */
-}
 
 const listItems = `<li>Eat goldfish</li><li>Re-stock fridge</li><li>Eat goldfish (again)</li>`;
 const renderedOrderedList = `<ol>${listItems}</ol>`;
