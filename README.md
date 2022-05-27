@@ -12,28 +12,46 @@ creating a new Markdown class
 import Markdown from "./Markdown.js";
 import * as fs from "fs";
 
-const markdown = new Markdown(fs.readFileSync("./hello-world.md", "utf-8"));
-
+const markdown = new Markdown(fs.readFileSync("./replit-post.md", "utf-8"));
 console.log(markdown.render());
 ```
 
-rendered HTML:
+rendered HTML (formatted for readability):
 
 ```html
 <h1>Hello World</h1>
-<p>This is an example post in this amazing blogf</p>
+<p>
+    This blog was created for the
+    <a href="https://blog.replit.com/template-jam">Replit Template Jam</a>.
+</p>
+<p>
+    This is the first post in my new blog! Take a look around. Everything you
+    see (both frontend and backend) is built with vanilla JavaScript. No
+    frameworks or libraries at all. Although my code is pretty crap and is
+    likely not as performant and tested as other maintained frameworks and
+    repositories, it's important to recognize the value of responsible and
+    good-old fashioned code.
+</p>
+<h2>Replit Features</h2>
+<p>
+    Ok obviously we didn't use <i>zero</i> libraries or frameworks. We used some
+    cool Replit features!
+</p>
 <ul>
-    <li>list one</li>
-    <li>list two</li>
-    <li>list three</li>
+    <li>Replit Database for comments</li>
+    <li>Replit Auth for comments</li>
 </ul>
+<h2>Project Timeline</h2>
+<p>Here are some important milestones in this project:</p>
 <ol>
-    <li>ordered list 2</li>
-    <li>ordered list with a <a href="https://google.com">link</a></li>
+    <li>Day 1: new Replit project to serve static resources</li>
+    <li>
+        Day 2 - 3: created a
+        <a href="https://github.com/nathan-pham/markdown-renderer"
+            >Markdown renderer</a
+        >
+        from scratch
+    </li>
+    <li>Day 4:</li>
 </ol>
-<p><img src="https://google.com" alt="and an image" /></p>
-<h2>Lmao</h2>
-<pre><code data-type="js">// this is an example code thingy that is very cool
-let x = 10;
-let y = x + 10;</code></pre>
 ```
