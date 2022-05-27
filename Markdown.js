@@ -1,7 +1,7 @@
 // created with shit-driven development:
 // keep adding features and loops until it works!
 export default class Markdown {
-    constructor(input) {
+    constructor(input = "") {
         this.currentIndex = 0;
         this.metadata = {};
 
@@ -39,6 +39,8 @@ export default class Markdown {
 
             this.currentIndex++;
         }
+
+        tokens.push(this.createToken("END", "END"));
 
         return tokens;
     }
@@ -80,7 +82,10 @@ export default class Markdown {
                 let linkContent = "";
                 let linkSrc = "";
 
-                while (content[currentIndex + 1] !== "]") {
+                while (
+                    content[currentIndex + 1] !== "]" &&
+                    content[currentIndex + 1]
+                ) {
                     currentIndex++;
                     linkContent += content[currentIndex];
                 }
@@ -93,7 +98,10 @@ export default class Markdown {
                     break handleLink;
                 }
 
-                while (content[currentIndex + 1] !== ")") {
+                while (
+                    content[currentIndex + 1] !== ")" &&
+                    content[currentIndex + 1]
+                ) {
                     currentIndex++;
                     linkSrc += content[currentIndex];
                 }
@@ -139,12 +147,19 @@ export default class Markdown {
             handleItalics: if (currentChar === "_" && !completePassFlag) {
                 let italicsContent = "";
 
-                while (content[currentIndex + 1] !== "_") {
+                while (
+                    content[currentIndex + 1] !== "_" &&
+                    content[currentIndex + 1]
+                ) {
                     currentIndex++;
                     italicsContent += content[currentIndex];
                 }
 
                 currentIndex++;
+                if (failed("_")) {
+                    break handleItalics;
+                }
+
                 renderedContent += `<i>${italicsContent}</i>`;
                 completePassFlag = true;
             }
@@ -158,7 +173,10 @@ export default class Markdown {
                     break handleBold;
                 }
 
-                while (content[currentIndex + 1] !== "*") {
+                while (
+                    content[currentIndex + 1] !== "*" &&
+                    content[currentIndex + 1]
+                ) {
                     currentIndex++;
                     boldContent += content[currentIndex];
                 }
@@ -169,6 +187,10 @@ export default class Markdown {
                 }
 
                 currentIndex++;
+                if (failed("*")) {
+                    break handleBold;
+                }
+
                 renderedContent += `<b>${boldContent}</b>`;
                 completePassFlag = true;
             }
@@ -261,10 +283,12 @@ export default class Markdown {
         let html = "";
         let currentIndex = 0;
 
-        while (currentIndex < this.tokens.length) {
+        renderLoop: while (currentIndex < this.tokens.length) {
             const currentToken = this.tokens[currentIndex];
 
-            if (currentToken.type === "ul") {
+            if (currentToken.type === "END" && currentToken.content === "END") {
+                break renderLoop;
+            } else if (currentToken.type === "ul") {
                 html += "<ul>";
 
                 while (this.tokens[currentIndex].type === "ul") {
@@ -277,6 +301,7 @@ export default class Markdown {
                     currentIndex++;
                 }
 
+                currentIndex--;
                 html += "</ul>";
             } else if (currentToken.type === "ol") {
                 html += "<ol>";
@@ -291,6 +316,7 @@ export default class Markdown {
                     currentIndex++;
                 }
 
+                currentIndex--;
                 html += "</ol>";
             } else if (currentToken.type === "code") {
                 html += `<pre>${this.createElement(

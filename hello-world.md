@@ -1,31 +1,19 @@
 ---
 title: Hello World
-description: This is a random post
 ---
 
 # Hello World
 
-This is an example post in this amazing blogf
+This is the first post in my new blog! Take a look around. Everything you see (both frontend and backend) is built with vanilla JavaScript. No frameworks or libraries at all. Although my code is pretty crap and is likely not as performant and tested as other maintained frameworks and repositories, it's important to recognize the value of responsible and good-old fashioned code.
 
--   list one
--   list two
--   list three
+## Replit Features
 
-1. ordered list
-2. ordered list 2
-3. ordered list with a [link](https://google.com)
+Ok obviously we didn't use _zero_ libraries or frameworks. We used some cool Replit features!
 
-along with a [link](https://google.com)
+-   Replit Database for comments
+-   Replit Auth for comments
 
-![and an image](https://google.com)
+1. test
 
-## Lmao
-
-and this is some _italics_ content and some **bold** content
-
-```js
-// this is an example code thingy that is very cool
-
-let x = 10;
-let y = x + 10;
-```
+sfsjdlkf sdf second end
+sd fsd f end

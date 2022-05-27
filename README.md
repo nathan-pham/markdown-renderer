@@ -4,6 +4,14 @@
 
 A vanilla Markdown parser and renderer. Needs heavy optimization and refactoring - use a different library instead. Currently supports images, links, lists, and code blocks.
 
+TODO:
+tests for
+
+-   ordered lists
+-   unordered lists
+
+include tests with and without content below
+
 ## Example Usage
 
 creating a new Markdown class
