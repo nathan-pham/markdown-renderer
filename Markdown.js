@@ -54,6 +54,7 @@ export default class Markdown {
     }
 
     // this really really really needs to be refactored
+    // manages internal line styles
     parseContent(content) {
         let currentIndex = 0;
         let renderedContent = "";
@@ -164,6 +165,27 @@ export default class Markdown {
                 completePassFlag = true;
             }
 
+            // handle inline code
+            handleInlineCode: if (currentChar === "`" && !completePassFlag) {
+                let codeContent = "";
+
+                while (
+                    content[currentIndex + 1] !== "`" &&
+                    content[currentIndex + 1]
+                ) {
+                    currentIndex++;
+                    codeContent += content[currentIndex];
+                }
+
+                currentIndex++;
+                if (failed("`")) {
+                    break handleInlineCode;
+                }
+
+                renderedContent += `<code>${codeContent}</code>`;
+                completePassFlag = true;
+            }
+
             // handle bold
             handleBold: if (currentChar === "*" && !completePassFlag) {
                 let boldContent = "";
@@ -205,6 +227,7 @@ export default class Markdown {
         return renderedContent;
     }
 
+    // manages overall line styles
     parseLine(currentLine) {
         // handle metadata
         if (currentLine === "---") {
@@ -254,6 +277,14 @@ export default class Markdown {
             } else {
                 return this.createToken("p", currentLine);
             }
+        }
+
+        // block quote
+        else if (currentLine.startsWith(">")) {
+            return this.createToken(
+                "blockquote",
+                currentLine.substring(1).trimStart()
+            );
         }
 
         // unordered list
@@ -323,6 +354,15 @@ export default class Markdown {
 
                 currentIndex--;
                 html += "</ol>";
+            } else if (currentToken.type === "blockquote") {
+                const quotes = [];
+                while (this.tokens[currentIndex].type === "blockquote") {
+                    quotes.push(this.tokens[currentIndex].content);
+                    currentIndex++;
+                }
+
+                currentIndex--;
+                html += `<blockquote>${quotes.join("<br />")}</blockquote>`;
             } else if (currentToken.type === "code") {
                 html += `<pre>${this.createElement(
                     currentToken.type,

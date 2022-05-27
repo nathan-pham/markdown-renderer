@@ -19,3 +19,9 @@ x++;
     const renderedCodeblock = `<pre><code>let x = 10;\nx++;</code></pre>`;
     expect(new Markdown(codeblock).render()).toBe(renderedCodeblock);
 });
+
+test("inline code", () => {
+    expect(
+        new Markdown("This is an amazing `inline code snippet` wow!").render()
+    ).toBe("<p>This is an amazing <code>inline code snippet</code> wow!</p>");
+});
