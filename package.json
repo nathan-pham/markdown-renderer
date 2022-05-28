@@ -6,12 +6,14 @@
     "type": "module",
     "scripts": {
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-        "start": "node index.js"
+        "start": "node index.js",
+        "build": "esbuild Markdown.js --minify --outdir=build"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "esbuild": "^0.14.41",
         "jest": "^28.1.0"
     }
 }

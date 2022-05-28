@@ -2,7 +2,7 @@
 
 # Markdown Renderer
 
-A vanilla Markdown renderer created for the Replit Template Jam. Although it needs heavy optimization and refactoring, it does not use a line of regex and therefore makes me feel like a real programmer. Currently supports images, links, lists, blockquotes, inline code, and code blocks.
+A vanilla Markdown renderer created for the Replit Template Jam. Although it needs heavy optimization and refactoring, it is surprisingly light weight (only 3.4kb when minified). Currently supports images, links, lists, blockquotes, inline code, and code blocks.
 
 ## Example Usage
 
