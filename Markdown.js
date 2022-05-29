@@ -182,7 +182,7 @@ export default class Markdown {
                     break handleInlineCode;
                 }
 
-                renderedContent += `<code>${codeContent}</code>`;
+                renderedContent += `<code data-type="inline">${codeContent}</code>`;
                 completePassFlag = true;
             }
 
