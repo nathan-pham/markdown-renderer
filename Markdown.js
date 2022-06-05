@@ -10,23 +10,25 @@ export default class Markdown {
     }
 
     static preprocess(input, delimiter = "\n") {
-        return input
-            .split(delimiter)
-            .map((t) => t.trim())
-            .filter((t) => t.length);
+        return (
+            input
+                .split(delimiter)
+                // .map((t) => t.trim())
+                .filter((t) => t.length)
+        );
     }
 
     get currentLine() {
-        return this.lines[this.currentIndex];
+        return this.lines[this.currentIndex]?.trim();
     }
 
     nextLine() {
         this.currentIndex++;
-        return this.lines[this.currentIndex];
+        return this.lines[this.currentIndex]?.trim();
     }
 
     peekLine() {
-        return this.lines[this.currentIndex + 1];
+        return this.lines[this.currentIndex + 1]?.trim();
     }
 
     tokenize() {
