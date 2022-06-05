@@ -10,31 +10,32 @@ export default class Markdown {
     }
 
     static preprocess(input, delimiter = "\n") {
-        return (
-            input
-                .split(delimiter)
-                // .map((t) => t.trim())
-                .filter((t) => t.length)
-        );
+        return input
+            .trim()
+            .split(delimiter)
+            .map((t) => (t.trim() === "" ? " " : t));
     }
 
-    get currentLine() {
-        return this.lines[this.currentIndex]?.trim();
+    currentLine(formatted = true) {
+        const line = this.lines[this.currentIndex];
+        return formatted && line ? line.trim() : line;
     }
 
-    nextLine() {
+    nextLine(formatted = true) {
         this.currentIndex++;
-        return this.lines[this.currentIndex]?.trim();
+        const line = this.lines[this.currentIndex];
+        return formatted && line ? line.trim() : line;
     }
 
-    peekLine() {
-        return this.lines[this.currentIndex + 1]?.trim();
+    peekLine(formatted = true) {
+        const line = this.lines[this.currentIndex + 1];
+        return formatted && line ? line.trim() : line;
     }
 
     tokenize() {
         const tokens = [];
         while (this.currentIndex < this.lines.length) {
-            const result = this.parseLine(this.currentLine);
+            const result = this.parseLine(this.currentLine());
             if (result) {
                 tokens.push(result);
             }
@@ -246,10 +247,10 @@ export default class Markdown {
         // handle code blocks
         else if (currentLine.startsWith("```")) {
             let code = [];
-            let codeType = currentLine.substring(3);
+            let codeType = currentLine.substring(3).trim();
 
-            while (this.peekLine() !== "```" && this.peekLine()) {
-                code.push(this.nextLine());
+            while (this.peekLine() !== "```" && this.peekLine(false)) {
+                code.push(this.nextLine(false));
             }
 
             this.nextLine();
@@ -259,7 +260,7 @@ export default class Markdown {
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;");
 
-            if (codeType) {
+            if (codeType.length > 0) {
                 return this.createToken("code", compiledCode, {
                     "data-type": codeType,
                 });
