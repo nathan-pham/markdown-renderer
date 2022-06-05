@@ -252,13 +252,18 @@ export default class Markdown {
 
             this.nextLine();
 
+            const compiledCode = code
+                .join("\n")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
             if (codeType) {
-                return this.createToken("code", code.join("\n"), {
+                return this.createToken("code", compiledCode, {
                     "data-type": codeType,
                 });
             }
 
-            return this.createToken("code", code.join("\n"));
+            return this.createToken("code", compiledCode);
         }
 
         // headings

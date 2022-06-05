@@ -23,5 +23,7 @@ x++;
 test("inline code", () => {
     expect(
         new Markdown("This is an amazing `inline code snippet` wow!").render()
-    ).toBe("<p>This is an amazing <code>inline code snippet</code> wow!</p>");
+    ).toBe(
+        '<p>This is an amazing <code data-type="inline">inline code snippet</code> wow!</p>'
+    );
 });
